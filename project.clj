@@ -5,6 +5,9 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies [[org.clojure/clojure "1.9.0"]
+                 [com.taoensso/encore "2.93.0"]
+                 [com.taoensso/sente "1.12.0"  :exclusions [org.clojure/core.async]]
+                 [com.taoensso/timbre "4.10.0"]
                  [http-kit "2.2.0"]
                  [ring-server "0.5.0"]
                  [reagent "0.7.0"]

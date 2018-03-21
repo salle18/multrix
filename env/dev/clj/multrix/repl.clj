@@ -1,8 +1,10 @@
 (ns multrix.repl
-  (:use multrix.handler
+  (:use multrix.routes
         figwheel-sidecar.repl-api
         ring.server.standalone
-        [ring.middleware file-info file]))
+        ring.middleware.file
+        ring.middleware.file-info
+        ))
 
 (defonce server (atom nil))
 

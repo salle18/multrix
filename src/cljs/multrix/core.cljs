@@ -1,49 +1,31 @@
 (ns multrix.core
-  (:require-macros
-    [cljs.core.async.macros :as asyncm
-     :refer                     (go go-loop)])
   (:require [reagent.core :as reagent
              :refer           [atom]]
             [secretary.core :as secretary
              :include-macros    true]
-            [cljs.core.async :as async
-             :refer              (<! >! put! chan)]
-            [taoensso.sente :as sente
-             :refer             (cb-success?)]
-            [accountant.core :as accountant]))
+            [accountant.core :as accountant]
+            [multrix.ws]
+            ))
 
-(let [{:keys [chsk ch-recv send-fn state]}
-      (sente/make-channel-socket! "/chsk" {:type :auto})]
-  (def chsk chsk)
-  (def ch-chsk ch-recv)
-  (def chsk-send! send-fn)
-  (def chsk-state state))
 
 ;; -------------------------
 ;; Views
 
-(defn home-page []
+(defn app-page []
   [:div
    [:h2 "Welcome to multrix"]
-   [:div [:a {:href "/about"} "go to about page"]]])
-
-(defn about-page []
-  [:div [:h2 "About multrix"]
-   [:div [:a {:href "/"} "go to the home page"]]])
+   ])
 
 ;; -------------------------
 ;; Routes
 
-(defonce page (atom #'home-page))
+(defonce page (atom #'app-page))
 
 (defn current-page []
   [:div [@page]])
 
 (secretary/defroute "/" []
-                    (reset! page #'home-page))
-
-(secretary/defroute "/about" []
-                    (reset! page #'about-page))
+                    (reset! page #'app-page))
 
 ;; -------------------------
 ;; Initialize app

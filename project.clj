@@ -36,7 +36,7 @@
 
   :uberjar-name "multrix.jar"
 
-  :main multrix.server
+  :main multrix.core
 
   :clean-targets ^{:protect false}
   [:target-path

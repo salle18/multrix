@@ -6,7 +6,8 @@
 
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [com.taoensso/encore "2.93.0"]
-                 [com.taoensso/sente "1.12.0"  :exclusions [org.clojure/core.async]]
+                 [org.clojure/core.async "0.3.465"]
+                 [com.taoensso/sente "1.12.0"]
                  [com.taoensso/timbre "4.10.0"]
                  [http-kit "2.2.0"]
                  [ring-server "0.5.0"]
@@ -94,7 +95,7 @@
                                   [ring/ring-mock "0.3.2"]
                                   [ring/ring-devel "1.6.3"]
                                   [prone "1.5.0"]
-                                  [figwheel-sidecar "0.5.15"]
+                                  [figwheel-sidecar "0.5.15" :exclusions [org.clojure/core.async]]
                                   [org.clojure/tools.nrepl "0.2.13"]
                                   [com.cemerick/piggieback "0.2.2"]
                                   [pjstadig/humane-test-output "0.8.3"]

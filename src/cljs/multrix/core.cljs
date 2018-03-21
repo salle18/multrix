@@ -4,17 +4,14 @@
             [secretary.core :as secretary
              :include-macros    true]
             [accountant.core :as accountant]
-            [multrix.ws]
-            ))
-
+            [multrix.ws :as ws]))
 
 ;; -------------------------
 ;; Views
 
 (defn app-page []
   [:div
-   [:h2 "Welcome to multrix"]
-   ])
+   [:h2 "Welcome to multrix"]])
 
 ;; -------------------------
 ;; Routes
@@ -42,4 +39,5 @@
     (fn [path]
       (secretary/locate-route path))})
   (accountant/dispatch-current!)
-  (mount-root))
+  (mount-root)
+  (ws/start!))

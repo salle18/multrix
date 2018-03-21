@@ -1,6 +1,7 @@
-(ns multrix.util)
+(ns multrix.util
+  (:require [taoensso.encore :as encore]
+            [taoensso.timbre :as timbre]))
 
-(defn foo-cljc [x]
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defn ->output! [messageFormat & args]
+  (let [message (apply encore/format messageFormat args)]
+    (timbre/debug message)))

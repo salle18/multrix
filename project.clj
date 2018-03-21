@@ -29,7 +29,7 @@
             [lein-asset-minifier "0.2.7"
              :exclusions [org.clojure/clojure]]]
 
-  :ring {:handler multrix.handler/app
+  :ring {:handler multrix.routes/app
          :uberwar-name "multrix.war"}
 
   :min-lein-version "2.5.0"
@@ -84,7 +84,7 @@
    :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"
                       ]
    :css-dirs ["resources/public/css"]
-   :ring-handler multrix.handler/app}
+   :ring-handler multrix.routes/app}
 
 
 

@@ -6,6 +6,7 @@
              :refer              (<! >! put! chan)]
             [taoensso.sente :as sente
              :refer             (cb-success?)]
+            [taoensso.encore :as encore :refer-macros (have have?)]
             [multrix.util :refer [->output!]]))
 
 (let [{:keys [chsk ch-recv send-fn state]}
@@ -28,14 +29,21 @@
   [{:as ev-msg :keys [event]}]
   (->output! "Unhandled event: %s" event))
 
-(defmethod -event-msg-handler :chsk/recv
-  [{:as ev-msg :keys [?data]}]
-  (->output! "Push event from server: %s" ?data))
-
 (defmethod -event-msg-handler :chsk/handshake
   [{:as ev-msg :keys [?data]}]
   (let [[?uid ?csrf-token ?handshake-data] ?data]
     (->output! "Handshake: %s" ?data)))
+
+(defmethod -event-msg-handler :chsk/state
+  [{:as ev-msg :keys [?data]}]
+  (let [[old-state-map new-state-map] (have vector? ?data)]
+    (if (:first-open? new-state-map)
+      (->output! "Channel socket successfully established!: %s" new-state-map)
+      (->output! "Channel socket state change: %s"              new-state-map))))
+
+(defmethod -event-msg-handler :chsk/recv
+  [{:as ev-msg :keys [?data]}]
+  (->output! "Push event from server: %s" ?data))
 
 (defonce router_ (atom nil))
 

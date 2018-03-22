@@ -31,6 +31,7 @@
   (reagent/render [current-page] (.getElementById js/document "app")))
 
 (defn init! []
+  (ws/start!)
   (accountant/configure-navigation!
    {:nav-handler
     (fn [path]
@@ -40,4 +41,4 @@
       (secretary/locate-route path))})
   (accountant/dispatch-current!)
   (mount-root)
-  (ws/start!))
+)

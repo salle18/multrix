@@ -1,20 +1,22 @@
-(ns multrix.ws
+(ns multrix.ws.handler
   (:require-macros
     [cljs.core.async.macros :as asyncm
      :refer                     (go go-loop)])
-  (:require [cljs.core.async :as async
-             :refer              (<! >! put! chan)]
-            [taoensso.sente :as sente
-             :refer             (cb-success?)]
-            [taoensso.encore :as encore :refer-macros (have have?)]
+  (:require [taoensso.encore :as encore
+             :refer-macros       (have)]
             [multrix.util :refer [->output!]]))
 
-(let [{:keys [chsk ch-recv send-fn state]}
-      (sente/make-channel-socket! "/chsk" {:type :auto})]
-  (def chsk chsk)
-  (def ch-chsk ch-recv)
-  (def chsk-send! send-fn)
-  (def chsk-state state))
+(defmulti event-handler
+  "Multimethod to handle server push events"
+  first)
+
+(defmethod event-handler :default
+  [data]
+  (->output! "Unhandled server push event: %s" data))
+
+(defmethod event-handler :chsk/ws-ping
+  []
+  (->output! "Server ping"))
 
 (defmulti -event-msg-handler
   "Multimethod to handle Sente `event-msg`s"
@@ -39,19 +41,9 @@
   (let [[old-state-map new-state-map] (have vector? ?data)]
     (if (:first-open? new-state-map)
       (->output! "Channel socket successfully established!: %s" new-state-map)
-      (->output! "Channel socket state change: %s"              new-state-map))))
+      (->output! "Channel socket state change: %s" new-state-map))))
 
 (defmethod -event-msg-handler :chsk/recv
   [{:as ev-msg :keys [?data]}]
-  (->output! "Push event from server: %s" ?data))
-
-(defonce router_ (atom nil))
-
-(defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
-(defn start-router! []
-  (stop-router!)
-  (reset! router_
-          (sente/start-client-chsk-router!
-           ch-chsk event-msg-handler)))
-
-(defn start! [] (start-router!))
+  (->output! "Push event from server: %s" ?data)
+  (event-handler ?data))

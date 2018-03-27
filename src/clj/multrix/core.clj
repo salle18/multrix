@@ -1,6 +1,6 @@
 (ns multrix.core
   (:require [multrix.routes :refer [app]]
-            [multrix.ws :as ws]
+            [multrix.ws.core :as ws]
             [multrix.config :refer [server-config]]
             [org.httpkit.server :refer [run-server]])
   (:gen-class))

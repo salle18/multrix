@@ -4,7 +4,7 @@
             [secretary.core :as secretary
              :include-macros    true]
             [accountant.core :as accountant]
-            [multrix.ws :as ws]))
+            [multrix.ws.core :as ws]))
 
 ;; -------------------------
 ;; Views
@@ -40,5 +40,4 @@
     (fn [path]
       (secretary/locate-route path))})
   (accountant/dispatch-current!)
-  (mount-root)
-)
+  (mount-root))

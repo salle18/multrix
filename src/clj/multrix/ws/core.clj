@@ -2,7 +2,7 @@
   (:require
     [taoensso.sente :as sente]
     [taoensso.sente.server-adapters.http-kit :refer (get-sch-adapter)]
-    [multrix.ws.handler :refer [event-msg-handler]]))
+    [multrix.ws.handler :refer [event-handler]]))
 
 (let [{:keys [ch-recv
               send-fn
@@ -24,6 +24,6 @@
   (stop-router!)
   (reset! router_
           (sente/start-server-chsk-router!
-           ch-receive! (partial event-msg-handler handler))))
+           ch-receive! (partial event-handler handler))))
 
 (defn start! [handler] (start-router! handler))

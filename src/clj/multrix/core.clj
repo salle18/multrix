@@ -3,11 +3,15 @@
             [multrix.ws.core :as ws]
             [multrix.config :refer [server-config]]
             [org.httpkit.server :refer [run-server]]
-            [multrix.event-handler :refer [event-handler]])
+            [multrix.game.core :as game]
+            [multrix.event-middleware :refer [event-middleware]])
   (:gen-class))
+
+(defn game-input! [game-handler]
+  (ws/start! (partial event-middleware game-handler)))
 
 (defn -main [& args]
   (do
-    (ws/start! event-handler)
+    (game/start! game-input!)
     (println "Starting server...")
     (run-server app server-config)))

@@ -1,5 +1,5 @@
 (ns multrix.game.listeners
-  (:require [multrix.game.controls :as controls]
+  (:require [multrix.game.keys :as keys]
             [multrix.game.events :as events]))
 
 (defn addEventListener [type listener]
@@ -18,8 +18,8 @@
 
 (defn init! [output!]
   (let [addControl (partial addKeyControl output!)]
-    (addControl controls/arrow-up events/rotate)
-    (addControl controls/arrow-right events/move-right)
-    (addControl controls/arrow-down events/move-down)
-    (addControl controls/arrow-left events/move-left)
-    (addControl controls/space events/speed-down)))
+    (addControl keys/arrow-up events/rotate)
+    (addControl keys/arrow-right events/move-right)
+    (addControl keys/arrow-down events/move-down)
+    (addControl keys/arrow-left events/move-left)
+    (addControl keys/space events/speed-down)))

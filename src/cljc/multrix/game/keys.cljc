@@ -1,4 +1,4 @@
-(ns multrix.game.controls)
+(ns multrix.game.keys)
 
 (def arrow-up "ArrowUp")
 

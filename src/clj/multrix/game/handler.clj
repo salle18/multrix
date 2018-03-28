@@ -7,12 +7,14 @@
   :id)
 
 (defmethod event-handler :multrix/connected
-  [{:keys [client-id]}]
-  (->output! "Game client connected: %s" client-id))
+  [{:keys [client-id send]}]
+  (->output! "Client connected: %s" client-id)
+  (state/handleAddClient client-id send))
 
 (defmethod event-handler :multrix/disconnected
   [{:keys [client-id]}]
-  (->output! "Game client disconnected: %s" client-id))
+  (->output! "Client disconnected: %s" client-id)
+  (state/handleRemoveClient client-id))
 
 (defmethod event-handler :multrix/up
   [{:keys [client-id]}]

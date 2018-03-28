@@ -1,6 +1,7 @@
 (ns multrix.event-middleware
   "Simple event handler that remaps ws events to multrix game events."
-  (:require [multrix.util :refer [->output!]]))
+  (:require [multrix.game.config :refer [event-namespace]]
+            [multrix.util :refer [->output!]]))
 
 (defmulti -event-middleware
   "Multimethod to handle server events"
@@ -26,6 +27,6 @@
 
 (defmethod -event-middleware :default
   [{:as event :keys [id]} handler]
-  (if (= (namespace id) "multrix")
+  (if (= (namespace id) event-namespace)
     (handler event)
     (->output! "Unknown event: %s" id)))

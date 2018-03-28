@@ -1,5 +1,6 @@
 (ns multrix.event-middleware
-  (:require [multrix.util :refer [->output!]]))
+  (:require [multrix.game.config :refer [event-namespace]]
+            [multrix.util :refer [->output!]]))
 
 (defmulti -event-middleware
   "Multimethod to handle server events"
@@ -12,8 +13,8 @@
   (->output! "Ping"))
 
 (defmethod -event-middleware :connected
-  [{:keys [client-id]} handler]
-  (handler {:id :multrix/connected :client-id client-id}))
+  [{:keys [client-id send]} handler]
+  (handler {:id :multrix/connected :client-id client-id :send send}))
 
 (defmethod -event-middleware :disconnected
   [{:keys [client-id]} handler]
@@ -21,6 +22,6 @@
 
 (defmethod -event-middleware :default
   [{:as event :keys [id]} handler]
-  (if (= (namespace id) "multrix")
+  (if (= (namespace id) event-namespace)
     (handler event)
     (->output! "Unknown event: %s" event)))

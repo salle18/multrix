@@ -1,5 +1,6 @@
 (ns multrix.game.handler
-  (:require [multrix.util :refer [->output!]]))
+  (:require [multrix.util :refer [->output!]]
+            [multrix.game.state :as state]))
 
 (defmulti event-handler
   "Multimethod to handle server game events"
@@ -15,19 +16,19 @@
 
 (defmethod event-handler :multrix/up
   [{:keys [client-id]}]
-  (->output! "UP: %s" client-id))
+  (state/handleUp client-id))
 
 (defmethod event-handler :multrix/right
   [{:keys [client-id]}]
-  (->output! "RIGHT: %s" client-id))
+  (state/handleRight client-id))
 
 (defmethod event-handler :multrix/down
   [{:keys [client-id]}]
-  (->output! "DOWN: %s" client-id))
+  (state/handleDown client-id))
 
 (defmethod event-handler :multrix/left
   [{:keys [client-id]}]
-  (->output! "LEFT: %s" client-id))
+  (state/handleLeft client-id))
 
 (defmethod event-handler :default
   [{:keys [id]}]

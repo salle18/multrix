@@ -4,7 +4,8 @@
             [secretary.core :as secretary
              :include-macros    true]
             [accountant.core :as accountant]
-            [multrix.event-handler :refer [event-handler]]
+            [multrix.game.core :as game]
+            [multrix.event-middleware :refer [event-middleware]]
             [multrix.ws.core :as ws]))
 
 ;; -------------------------
@@ -28,11 +29,15 @@
 ;; -------------------------
 ;; Initialize app
 
+(defn game-input! [game-handler]
+  (ws/start! (partial event-middleware game-handler)))
+
+(def game-output! ws/ch-send!)
+
 (defn mount-root []
   (reagent/render [current-page] (.getElementById js/document "app")))
 
 (defn init! []
-  (ws/start! event-handler)
   (accountant/configure-navigation!
    {:nav-handler
     (fn [path]
@@ -41,4 +46,5 @@
     (fn [path]
       (secretary/locate-route path))})
   (accountant/dispatch-current!)
-  (mount-root))
+  (mount-root)
+  (game/start! game-input! game-output!))

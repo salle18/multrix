@@ -1,6 +1,6 @@
 (ns multrix.event-middleware
   "Simple event handler that remaps ws events to multrix game events."
-  (:require [multrix.game.config :refer [event-namespace]]
+  (:require [multrix.game.events :refer [event-namespace]]
             [multrix.util :refer [->output!]]))
 
 (defmulti -event-middleware

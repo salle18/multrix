@@ -1,5 +1,5 @@
 (ns multrix.event-middleware
-  (:require [multrix.game.config :refer [event-namespace]]
+  (:require [multrix.game.events :refer [event-namespace]]
             [multrix.util :refer [->output!]]))
 
 (defmulti -event-middleware

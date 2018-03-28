@@ -1,9 +1,13 @@
 (ns multrix.game.state
-  (:require [multrix.game.config :refer [max-number-of-players]]))
+  (:require [multrix.game.config :refer [max-number-of-players court-width court-height]]
+            [multrix.game.fields :as fields]))
 
 (defonce game-state (atom {}))
 
-(def new-game-state {:score 0})
+(def new-game-board
+  (into [] (repeat court-height (into [] (repeat court-width fields/empty)))))
+
+(def new-game-state {:score 0 :board new-game-board})
 
 (defn handleUp [client-id] (swap! game-state update-in [client-id :score] inc))
 

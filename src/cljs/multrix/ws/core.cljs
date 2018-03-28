@@ -2,7 +2,7 @@
   (:require [taoensso.sente :as sente]
             [taoensso.encore :as encore]
             [multrix.ws.config :refer [ws-route]]
-            [multrix.ws.handler :refer [event-msg-handler]]))
+            [multrix.ws.handler :refer [event-handler]]))
 
 (let [{:keys [ch-recv send-fn]}
       (sente/make-channel-socket! ws-route {:type :auto :client-id (encore/uuid-str)})]
@@ -16,6 +16,6 @@
   (stop-router!)
   (reset! router_
           (sente/start-client-chsk-router!
-           ch-receive! (partial event-msg-handler handler))))
+           ch-receive! (partial event-handler handler))))
 
 (defn start! [handler] (start-router! handler))

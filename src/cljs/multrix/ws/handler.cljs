@@ -1,30 +1,30 @@
 (ns multrix.ws.handler)
 
-(defmulti -event-msg-handler
+(defmulti -event-handler
   "Multimethod to handle Sente events"
   :id)
 
-(defn event-msg-handler
-  "Wraps `-event-msg-handler`"
+(defn event-handler
+  "Wraps `-event-handler`"
   [handler event]
-  (-event-msg-handler event handler))
+  (-event-handler event handler))
 
-(defmethod -event-msg-handler :default
+(defmethod -event-handler :default
   [{:keys [?data]} handler]
   (handler {:id :unknown :data ?data}))
 
-(defmethod -event-msg-handler :chsk/handshake
+(defmethod -event-handler :chsk/handshake
   [{:keys [?data]} handler]
   (handler {:id :handshake}))
 
-(defmethod -event-msg-handler :chsk/state
+(defmethod -event-handler :chsk/state
   [{:keys [?data]} handler]
   (let [[_ new-state-map] ?data]
     (if (:open? new-state-map)
       (handler {:id :connected})
       (handler {:id :disconnected}))))
 
-(defmethod -event-msg-handler :chsk/recv
+(defmethod -event-handler :chsk/recv
   [{:keys [?data]} handler]
   (let [id (first ?data)]
     (if (= id :chsk/ws-ping)

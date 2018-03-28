@@ -4,6 +4,7 @@
             [secretary.core :as secretary
              :include-macros    true]
             [accountant.core :as accountant]
+            [multrix.event-handler :refer [event-handler]]
             [multrix.ws.core :as ws]))
 
 ;; -------------------------
@@ -31,7 +32,7 @@
   (reagent/render [current-page] (.getElementById js/document "app")))
 
 (defn init! []
-  (ws/start!)
+  (ws/start! event-handler)
   (accountant/configure-navigation!
    {:nav-handler
     (fn [path]

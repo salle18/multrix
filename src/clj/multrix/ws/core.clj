@@ -13,17 +13,17 @@
 
   (def ring-ajax-post ajax-post-fn)
   (def ring-ajax-get-or-ws-handshake ajax-get-or-ws-handshake-fn)
-  (def ch-chsk ch-recv)
-  (def chsk-send! send-fn)
+  (def ch-receive! ch-recv)
+  (def ch-send! send-fn)
   (def connected-uids connected-uids))
 
 (defonce router_ (atom nil))
 
 (defn stop-router! [] (when-let [stop-fn @router_] (stop-fn)))
-(defn start-router! []
+(defn start-router! [handler]
   (stop-router!)
   (reset! router_
           (sente/start-server-chsk-router!
-           ch-chsk event-msg-handler)))
+           ch-receive! (partial event-msg-handler handler))))
 
-(defn start! [] (start-router!))
+(defn start! [handler] (start-router! handler))

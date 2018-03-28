@@ -3,7 +3,7 @@
 
 (defmulti event-handler
   "Multimethod to handle server game events"
-  first)
+  :id)
 
 (defmethod event-handler :multrix/connected
   [_]
@@ -12,6 +12,10 @@
 (defmethod event-handler :multrix/disconnected
   [_]
   (->output! "Game disconnected"))
+
+(defmethod event-handler :multrix/state
+  [event]
+  (->output! "State: %s" event))
 
 (defmethod event-handler :default
   [event]

@@ -25,5 +25,7 @@
   (handler {:id :multrix/disconnected}))
 
 (defmethod -event-middleware :default
-  [{:keys [id data]} handler]
-  (if (= (namespace id) "multrix") (handler {:id id :data data}) (->output! "Unknown event: %s" id)))
+  [{:as event :keys [id]} handler]
+  (if (= (namespace id) "multrix")
+    (handler event)
+    (->output! "Unknown event: %s" id)))

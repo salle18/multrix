@@ -26,7 +26,7 @@
 
 (defmethod -event-handler :chsk/recv
   [{:keys [?data]} handler]
-  (let [id (first ?data)]
+  (let [[id data] ?data]
     (if (= id :chsk/ws-ping)
       (handler {:id :ping})
-      (handler {:id id :data ?data}))))
+      (handler (assoc data :id id)))))

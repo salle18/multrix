@@ -1,10 +1,16 @@
 (defproject multrix "0.1.0-SNAPSHOT"
   :description "Multrix multiplayer tetris-like online game"
   :url "https://multrix.herokuapp.com/"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :license
+  {:name "Eclipse Public License"
+   :url  "http://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies [[org.clojure/clojure "1.9.0"]
+                 [com.taoensso/encore "2.93.0"]
+                 [org.clojure/core.async "0.3.465"]
+                 [com.taoensso/sente "1.12.0"]
+                 [com.taoensso/timbre "4.10.0"]
+                 [http-kit "2.2.0"]
                  [ring-server "0.5.0"]
                  [reagent "0.7.0"]
                  [reagent-utils "0.3.1"]
@@ -13,27 +19,35 @@
                  [compojure "1.6.0"]
                  [hiccup "1.0.5"]
                  [yogthos/config "1.1"]
-                 [org.clojure/clojurescript "1.9.946"
-                  :scope "provided"]
+                 [org.clojure/clojurescript
+                  "1.9.946"
+                  :scope
+                  "provided"]
                  [secretary "1.2.3"]
-                 [venantius/accountant "0.2.4"
-                  :exclusions [org.clojure/tools.reader]]]
+                 [venantius/accountant
+                  "0.2.4"
+                  :exclusions
+                  [org.clojure/tools.reader]]]
 
-  :plugins [[lein-environ "1.1.0"]
-            [lein-cljsbuild "1.1.7"]
-            [lein-asset-minifier "0.2.7"
-             :exclusions [org.clojure/clojure]]]
+  :plugins
+  [[lein-environ "1.1.0"]
+   [lein-cljsbuild "1.1.7"]
+   [lein-asset-minifier "0.2.7"
+    :exclusions
+    [org.clojure/clojure]]]
 
-  :ring {:handler multrix.handler/app
-         :uberwar-name "multrix.war"}
+  :ring
+  {:handler      multrix.routes/app
+   :uberwar-name "multrix.war"}
 
   :min-lein-version "2.5.0"
 
   :uberjar-name "multrix.jar"
 
-  :main multrix.server
+  :main multrix.core
 
-  :clean-targets ^{:protect false}
+  :clean-targets
+  ^{:protect false}
   [:target-path
    [:cljsbuild :builds :app :compiler :output-dir]
    [:cljsbuild :builds :app :compiler :output-to]]
@@ -49,66 +63,62 @@
   {:builds {:min
             {:source-paths ["src/cljs" "src/cljc" "env/prod/cljs"]
              :compiler
-             {:output-to        "target/cljsbuild/public/js/app.js"
-              :output-dir       "target/cljsbuild/public/js"
-              :source-map       "target/cljsbuild/public/js/app.js.map"
+             {:output-to     "target/cljsbuild/public/js/app.js"
+              :output-dir    "target/cljsbuild/public/js"
+              :source-map    "target/cljsbuild/public/js/app.js.map"
               :optimizations :advanced
               :pretty-print  false}}
             :app
             {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-             :figwheel {:on-jsload "multrix.core/mount-root"}
+             :figwheel     {:on-jsload "multrix.core/mount-root"}
              :compiler
-             {:main "multrix.dev"
-              :asset-path "/js/out"
-              :output-to "target/cljsbuild/public/js/app.js"
-              :output-dir "target/cljsbuild/public/js/out"
-              :source-map true
+             {:main          "multrix.dev"
+              :asset-path    "/js/out"
+              :output-to     "target/cljsbuild/public/js/app.js"
+              :output-dir    "target/cljsbuild/public/js/out"
+              :source-map    true
               :optimizations :none
-              :pretty-print  true}}
-
-
-
-            }
-   }
+              :pretty-print  true}}}}
 
 
   :figwheel
   {:http-server-root "public"
-   :server-port 3449
-   :nrepl-port 7002
-   :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"
-                      ]
-   :css-dirs ["resources/public/css"]
-   :ring-handler multrix.handler/app}
+   :server-port      3449
+   :nrepl-port       7002
+   :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
+   :css-dirs         ["resources/public/css"]
+   :ring-handler     multrix.routes/app}
 
 
+  :profiles
+  {:dev     {:repl-options {:init-ns          multrix.repl
+                            :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
-  :profiles {:dev {:repl-options {:init-ns multrix.repl
-                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+             :dependencies [[binaryage/devtools "0.9.9"]
+                            [ring/ring-mock "0.3.2"]
+                            [ring/ring-devel "1.6.3"]
+                            [prone "1.5.0"]
+                            [figwheel-sidecar "0.5.15" :exclusions [org.clojure/core.async]]
+                            [org.clojure/tools.nrepl "0.2.13"]
+                            [com.cemerick/piggieback "0.2.2"]
+                            [pjstadig/humane-test-output "0.8.3"]]
 
-                   :dependencies [[binaryage/devtools "0.9.9"]
-                                  [ring/ring-mock "0.3.2"]
-                                  [ring/ring-devel "1.6.3"]
-                                  [prone "1.5.0"]
-                                  [figwheel-sidecar "0.5.15"]
-                                  [org.clojure/tools.nrepl "0.2.13"]
-                                  [com.cemerick/piggieback "0.2.2"]
-                                  [pjstadig/humane-test-output "0.8.3"]
-                                  
- ]
+             :source-paths ["env/dev/clj"]
+             :plugins      [[lein-figwheel "0.5.15"]]
 
-                   :source-paths ["env/dev/clj"]
-                   :plugins [[lein-figwheel "0.5.15"]
-]
+             :injections   [(require
+                             'pjstadig.humane-test-output)
+                            (pjstadig.humane-test-output/activate!)]
 
-                   :injections [(require 'pjstadig.humane-test-output)
-                                (pjstadig.humane-test-output/activate!)]
+             :env          {:dev true}}
 
-                   :env {:dev true}}
+   :uberjar {:hooks        [minify-assets.plugin/hooks]
+             :source-paths ["env/prod/clj"]
+             :prep-tasks   ["compile" ["cljsbuild" "once" "min"]]
+             :env          {:production true}
+             :aot          :all
+             :omit-source  true}}
 
-             :uberjar {:hooks [minify-assets.plugin/hooks]
-                       :source-paths ["env/prod/clj"]
-                       :prep-tasks ["compile" ["cljsbuild" "once" "min"]]
-                       :env {:production true}
-                       :aot :all
-                       :omit-source true}})
+  :aliases
+  {"start-repl" ["do" "clean," "cljsbuild" "once," "repl" ":headless"]
+   "start"      ["do" "clean," "cljsbuild" "once," "run"]})

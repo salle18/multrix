@@ -1,3 +1,3 @@
 (ns multrix.game.fields)
 
-(def empty :e)
+(def empty-field :e)

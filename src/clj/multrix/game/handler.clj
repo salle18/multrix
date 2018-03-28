@@ -1,36 +1,41 @@
 (ns multrix.game.handler
   (:require [multrix.util :refer [->output!]]
+            [multrix.game.events :as events]
             [multrix.game.state :as state]))
 
 (defmulti event-handler
   "Multimethod to handle server game events"
   :id)
 
-(defmethod event-handler :multrix/connected
+(defmethod event-handler events/connected
   [{:keys [client-id send]}]
   (->output! "Client connected: %s" client-id)
-  (state/handleAddClient client-id send))
+  (state/add-client client-id send))
 
-(defmethod event-handler :multrix/disconnected
+(defmethod event-handler events/disconnected
   [{:keys [client-id]}]
   (->output! "Client disconnected: %s" client-id)
-  (state/handleRemoveClient client-id))
+  (state/remove-client client-id))
 
-(defmethod event-handler :multrix/up
+(defmethod event-handler events/rotate
   [{:keys [client-id]}]
-  (state/handleUp client-id))
+  (state/rotate client-id))
 
-(defmethod event-handler :multrix/right
+(defmethod event-handler events/move-right
   [{:keys [client-id]}]
-  (state/handleRight client-id))
+  (state/move-right client-id))
 
-(defmethod event-handler :multrix/down
+(defmethod event-handler events/move-down
   [{:keys [client-id]}]
-  (state/handleDown client-id))
+  (state/move-down client-id))
 
-(defmethod event-handler :multrix/left
+(defmethod event-handler events/move-left
   [{:keys [client-id]}]
-  (state/handleLeft client-id))
+  (state/move-left client-id))
+
+(defmethod event-handler events/speed-down
+  [{:keys [client-id]}]
+  (state/speed-down client-id))
 
 (defmethod event-handler :default
   [{:keys [id]}]

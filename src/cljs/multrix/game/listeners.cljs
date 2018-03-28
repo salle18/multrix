@@ -1,10 +1,6 @@
-(ns multrix.game.controls)
-
-(def controls
-  {:up    "ArrowUp"
-   :right "ArrowRight"
-   :down  "ArrowDown"
-   :left  "ArrowLeft"})
+(ns multrix.game.listeners
+  (:require [multrix.game.controls :as controls]
+            [multrix.game.events :as events]))
 
 (defn addEventListener [type listener]
   (js/document.addEventListener type listener))
@@ -22,7 +18,8 @@
 
 (defn init! [output!]
   (let [addControl (partial addKeyControl output!)]
-    (addControl (:up controls) :multrix/up)
-    (addControl (:right controls) :multrix/right)
-    (addControl (:down controls) :multrix/down)
-    (addControl (:left controls) :multrix/left)))
+    (addControl controls/arrow-up events/rotate)
+    (addControl controls/arrow-right events/move-right)
+    (addControl controls/arrow-down events/move-down)
+    (addControl controls/arrow-left events/move-left)
+    (addControl controls/space events/speed-down)))

@@ -1,7 +1,7 @@
 (ns multrix.game.core
-  (:require [multrix.game.controls :as controls]
+  (:require [multrix.game.listeners :as listeners]
             [multrix.game.handler :refer [event-handler]]))
 
 (defn start! [input! output!]
   (input! event-handler)
-  (controls/init! output!))
+  (listeners/init! output!))

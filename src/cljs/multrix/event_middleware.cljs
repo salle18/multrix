@@ -1,6 +1,7 @@
 (ns multrix.event-middleware
   "Simple event handler that remaps ws events to multrix game events."
-  (:require [multrix.game.events :refer [event-namespace]]
+  (:require [multrix.game.events :as events
+             :refer                  [event-namespace]]
             [multrix.util :refer [->output!]]))
 
 (defmulti -event-middleware
@@ -19,11 +20,11 @@
 
 (defmethod -event-middleware :connected
   [_ handler]
-  (handler {:id :multrix/connected}))
+  (handler {:id events/connected}))
 
 (defmethod -event-middleware :disconnected
   [_ handler]
-  (handler {:id :multrix/disconnected}))
+  (handler {:id events/disconnected}))
 
 (defmethod -event-middleware :default
   [{:as event :keys [id]} handler]

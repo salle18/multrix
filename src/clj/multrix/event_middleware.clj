@@ -1,5 +1,6 @@
 (ns multrix.event-middleware
-  (:require [multrix.game.events :refer [event-namespace]]
+  (:require [multrix.game.events :as events
+             :refer                  [event-namespace]]
             [multrix.util :refer [->output!]]))
 
 (defmulti -event-middleware
@@ -14,11 +15,11 @@
 
 (defmethod -event-middleware :connected
   [{:keys [client-id send]} handler]
-  (handler {:id :multrix/connected :client-id client-id :send send}))
+  (handler {:id events/connected :client-id client-id :send send}))
 
 (defmethod -event-middleware :disconnected
   [{:keys [client-id]} handler]
-  (handler {:id :multrix/disconnected :client-id client-id}))
+  (handler {:id events/disconnected :client-id client-id}))
 
 (defmethod -event-middleware :default
   [{:as event :keys [id]} handler]

@@ -15,12 +15,12 @@
   (->output! "Ping"))
 
 (defmethod -event-middleware :connected
-  [{:keys [client-id send]} handler]
-  (handler {:id events/connected :client-id client-id :send send}))
+  [{:keys [client-uid send]} handler]
+  (handler {:id events/connected :client-uid client-uid :send send}))
 
 (defmethod -event-middleware :disconnected
-  [{:keys [client-id]} handler]
-  (handler {:id events/disconnected :client-id client-id}))
+  [{:keys [client-uid]} handler]
+  (handler {:id events/disconnected :client-uid client-uid}))
 
 (defmethod -event-middleware :default
   [{:as event :keys [id]} handler]

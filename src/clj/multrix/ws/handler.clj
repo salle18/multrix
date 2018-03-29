@@ -1,6 +1,4 @@
-(ns multrix.ws.handler
-  (:require
-    [multrix.util :refer [->output!]]))
+(ns multrix.ws.handler)
 
 (defmulti -event-handler
   "Multimethod to handle Sente events"
@@ -12,9 +10,9 @@
   (-event-handler event handler))
 
 (defmethod -event-handler :default
-  [{:keys [id ?data ?reply-fn client-id send-fn]} handler]
+  [{:keys [id ?data ?reply-fn client-uid send-fn]} handler]
   (handler
-   {:id id :data ?data :reply ?reply-fn :send send-fn :client-id client-id}))
+   {:id id :data ?data :reply ?reply-fn :send send-fn :client-uid client-uid}))
 
 (defmethod -event-handler :chsk/ws-ping
   [_ handler]
@@ -22,8 +20,8 @@
 
 (defmethod -event-handler :chsk/uidport-open
   [{:keys [client-id send-fn]} handler]
-  (handler {:id :connected :client-id client-id :send send-fn}))
+  (handler {:id :connected :client-uid client-id :send send-fn}))
 
 (defmethod -event-handler :chsk/uidport-close
   [{:keys [client-id]} handler]
-  (handler {:id :disconnected :client-id client-id}))
+  (handler {:id :disconnected :client-uid client-id}))

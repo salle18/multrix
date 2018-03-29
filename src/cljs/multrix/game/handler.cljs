@@ -1,5 +1,6 @@
 (ns multrix.game.handler
   (:require [multrix.game.events :as events]
+            [multrix.game.state :as state]
             [multrix.util :refer [->output!]]))
 
 (defmulti event-handler
@@ -8,11 +9,11 @@
 
 (defmethod event-handler events/connected
   [_]
-  (->output! "Game connected"))
+  (state/set-connected true))
 
 (defmethod event-handler events/disconnected
   [_]
-  (->output! "Game disconnected"))
+  (state/set-connected false))
 
 (defmethod event-handler events/game-full
   [_]

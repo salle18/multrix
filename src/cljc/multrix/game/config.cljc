@@ -1,6 +1,6 @@
 (ns multrix.game.config)
 
-(def max-number-of-players 4)
+(def max-number-of-clients 4)
 
 (def court-width 12)
 

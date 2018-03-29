@@ -3,9 +3,10 @@
              :as    async
              :refer [close! go-loop <! timeout]]))
 
-(defn emit-all! [uids emitter!]
-  (let [uids (:any @uids)]
-    (doseq [uid uids]
+(defn emit-all! [get-uids emitter!]
+  (let [uids (get-uids)]
+    (doseq [uid   uids
+            :when (some? uid)]
       (emitter! uid))))
 
 (defn start-emit! [emitter timeout]
@@ -14,5 +15,5 @@
            (emitter)
            (recur)))
 
-(defn start! [uids emitter! timeout]
-  (start-emit! (fn [] (emit-all! uids emitter!)) timeout))
+(defn start! [get-uids emitter! timeout]
+  (start-emit! (fn [] (emit-all! get-uids emitter!)) timeout))

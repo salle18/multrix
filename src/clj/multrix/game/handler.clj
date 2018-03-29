@@ -8,34 +8,34 @@
   :id)
 
 (defmethod event-handler events/connected
-  [{:keys [client-id send]}]
-  (->output! "Client connected: %s" client-id)
-  (state/add-client client-id send))
+  [{:keys [client-uid send]}]
+  (->output! "Client connected: %s" client-uid)
+  (state/add-client client-uid send))
 
 (defmethod event-handler events/disconnected
-  [{:keys [client-id]}]
-  (->output! "Client disconnected: %s" client-id)
-  (state/remove-client client-id))
+  [{:keys [client-uid]}]
+  (->output! "Client disconnected: %s" client-uid)
+  (state/remove-client client-uid))
 
 (defmethod event-handler events/rotate
-  [{:keys [client-id]}]
-  (state/rotate client-id))
+  [{:keys [client-uid]}]
+  (state/rotate client-uid))
 
 (defmethod event-handler events/move-right
-  [{:keys [client-id]}]
-  (state/move-right client-id))
+  [{:keys [client-uid]}]
+  (state/move-right client-uid))
 
 (defmethod event-handler events/move-down
-  [{:keys [client-id]}]
-  (state/move-down client-id))
+  [{:keys [client-uid]}]
+  (state/move-down client-uid))
 
 (defmethod event-handler events/move-left
-  [{:keys [client-id]}]
-  (state/move-left client-id))
+  [{:keys [client-uid]}]
+  (state/move-left client-uid))
 
 (defmethod event-handler events/speed-down
-  [{:keys [client-id]}]
-  (state/speed-down client-id))
+  [{:keys [client-uid]}]
+  (state/speed-down client-uid))
 
 (defmethod event-handler :default
   [{:keys [id]}]

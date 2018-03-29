@@ -3,15 +3,15 @@
             [multrix.game.emitter :as emmiter]
             [multrix.game.events :as events]
             [multrix.game.config :as config]
-            [multrix.game.state :refer [game-state]]))
+            [multrix.game.state :refer [get-client-uids get-clients-state get-client-state]]))
 
-(defn state-emitter-all! [output! uid]
-  (output! uid [events/game-state-all {:data @game-state}]))
+(defn state-emitter-all! [output! client-uid]
+  (output! client-uid [events/game-state-all {:data (get-clients-state)}]))
 
-(defn state-emitter! [output! uid]
-  (output! uid [events/game-state {:data (get @game-state uid)}]))
+(defn state-emitter! [output! client-uid]
+  (output! client-uid [events/game-state {:data (get-client-state client-uid)}]))
 
-(defn start! [input! output! uids]
+(defn start! [input! output!]
   (input! event-handler)
-  (emmiter/start! uids (partial state-emitter-all! output!) config/game-latency-state-all)
-  (emmiter/start! uids (partial state-emitter! output!) config/game-latency-state))
+  (emmiter/start! get-client-uids (partial state-emitter-all! output!) config/game-latency-state-all)
+  (emmiter/start! get-client-uids (partial state-emitter! output!) config/game-latency-state))

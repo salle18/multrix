@@ -9,8 +9,12 @@
 
 (defmethod event-handler events/connected
   [{:keys [client-uid send]}]
-  (->output! "Client connected: %s" client-uid)
-  (state/add-client client-uid send))
+  (let [connected-state (state/add-client client-uid)]
+    (case connected-state
+      :connected (do
+                   (->output! "Client connected: %s" client-uid)
+                   (send client-uid [events/game-init {:data (state/get-clients-state)}]))
+      :game-full (send client-uid [events/game-full]))))
 
 (defmethod event-handler events/disconnected
   [{:keys [client-uid]}]

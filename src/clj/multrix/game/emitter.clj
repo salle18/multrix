@@ -9,10 +9,10 @@
             :when (some? uid)]
       (emitter! uid))))
 
-(defn start-emit! [emitter timeout]
+(defn start-emit! [emitter! timeout]
   (go-loop []
            (<! (async/timeout timeout))
-           (emitter)
+           (emitter!)
            (recur)))
 
 (defn start! [get-uids emitter! timeout]

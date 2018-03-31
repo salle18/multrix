@@ -14,8 +14,8 @@
     (case connected-state
       :connected (do
                    (log/->debug! "Client connected: %s" client-uid)
-                   (emitter/emit-init-game client-uid))
-      :game-full (emitter/emit-game-full client-uid))))
+                   (emitter/emit-init-game! client-uid))
+      :game-full (emitter/emit-game-full! client-uid))))
 
 (defmethod event-handler events/disconnected
   [{:keys [client-uid]}]

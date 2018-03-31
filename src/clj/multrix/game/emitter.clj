@@ -23,10 +23,10 @@
 (defn emit-state-client! [client-uid]
   (output! client-uid [events/game-state {:data (get-client-state client-uid)}]))
 
-(defn emit-game-full [client-uid]
+(defn emit-game-full! [client-uid]
   (output! client-uid [events/game-full]))
 
-(defn emit-init-game [client-uid]
+(defn emit-init-game! [client-uid]
   (output! client-uid [events/game-init {:data (get-clients-state)}]))
 
 (defn start! [output-fn!]

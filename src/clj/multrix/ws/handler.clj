@@ -10,17 +10,17 @@
   (-event-handler event handler))
 
 (defmethod -event-handler :default
-  [{:keys [id ?data ?reply-fn client-uid send-fn]} handler]
+  [{:keys [id ?data ?reply-fn client-uid]} handler]
   (handler
-   {:id id :data ?data :reply ?reply-fn :send send-fn :client-uid client-uid}))
+   {:id id :data ?data :reply ?reply-fn :client-uid client-uid}))
 
 (defmethod -event-handler :chsk/ws-ping
   [_ handler]
   (handler {:id :ping}))
 
 (defmethod -event-handler :chsk/uidport-open
-  [{:keys [client-id send-fn]} handler]
-  (handler {:id :connected :client-uid client-id :send send-fn}))
+  [{:keys [client-id]} handler]
+  (handler {:id :connected :client-uid client-id}))
 
 (defmethod -event-handler :chsk/uidport-close
   [{:keys [client-id]} handler]

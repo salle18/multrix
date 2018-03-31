@@ -1,5 +1,6 @@
 (ns multrix.game.handler
-  (:require [multrix.util :refer [->output!]]
+  (:require [multrix.util.log :as log]
+            [multrix.game.emitter :as emitter]
             [multrix.game.events :as events]
             [multrix.game.state :as state]))
 
@@ -8,17 +9,17 @@
   :id)
 
 (defmethod event-handler events/connected
-  [{:keys [client-uid send]}]
+  [{:keys [client-uid]}]
   (let [connected-state (state/add-client client-uid)]
     (case connected-state
       :connected (do
-                   (->output! "Client connected: %s" client-uid)
-                   (send client-uid [events/game-init {:data (state/get-clients-state)}]))
-      :game-full (send client-uid [events/game-full]))))
+                   (log/->debug! "Client connected: %s" client-uid)
+                   (emitter/emit-init-game client-uid))
+      :game-full (emitter/emit-game-full client-uid))))
 
 (defmethod event-handler events/disconnected
   [{:keys [client-uid]}]
-  (->output! "Client disconnected: %s" client-uid)
+  (log/->debug! "Client disconnected: %s" client-uid)
   (state/remove-client client-uid))
 
 (defmethod event-handler events/rotate
@@ -43,4 +44,4 @@
 
 (defmethod event-handler :default
   [{:keys [id]}]
-  (->output! "Unhandled game event: %s" id))
+  (log/->debug! "Unhandled game event: %s" id))

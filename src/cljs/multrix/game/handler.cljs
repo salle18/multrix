@@ -1,7 +1,7 @@
 (ns multrix.game.handler
   (:require [multrix.game.events :as events]
             [multrix.game.state :as state]
-            [multrix.util :refer [->output!]]))
+            [multrix.util.log :as log]))
 
 (defmulti event-handler
   "Multimethod to handle server game events"
@@ -17,20 +17,20 @@
 
 (defmethod event-handler events/game-full
   [_]
-  (->output! "Game full"))
+  (log/->debug! "Game full"))
 
 (defmethod event-handler events/game-init
   [event]
-  (->output! "Init: %s" event))
+  (log/->debug! "Init: %s" event))
 
 (defmethod event-handler events/game-state
   [event]
-  (->output! "State: %s" event))
+  (log/->debug! "State: %s" event))
 
 (defmethod event-handler events/game-state-all
   [event]
-  (->output! "State for all: %s" event))
+  (log/->debug! "State for all: %s" event))
 
 (defmethod event-handler :default
   [event]
-  (->output! "Unhandled game event: %s" event))
+  (log/->debug! "Unhandled game event: %s" event))

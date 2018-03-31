@@ -2,7 +2,7 @@
   (:require [multrix.game.events
              :as    events
              :refer [event-namespace]]
-            [multrix.util :refer [->output!]]))
+            [multrix.util.log :as log]))
 
 (defmulti -event-middleware
   "Multimethod to handle server events"
@@ -12,7 +12,7 @@
 
 (defmethod -event-middleware :ping
   [_ handler]
-  (->output! "Ping"))
+  (log/->debug! "Ping"))
 
 (defmethod -event-middleware :connected
   [{:keys [client-uid send]} handler]
@@ -26,4 +26,4 @@
   [{:as event :keys [id]} handler]
   (if (= (namespace id) event-namespace)
     (handler event)
-    (->output! "Unknown event: %s" event)))
+    (log/->debug! "Unknown event: %s" event)))

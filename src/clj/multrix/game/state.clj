@@ -43,7 +43,8 @@
 (defn remove-client [client-uid]
   (swap! game-state remove-client-state client-uid))
 
-(defn get-client-uids [] (let [{:keys [client-uids]} @game-state] client-uids))
+(defn get-client-uids []
+  (let [{:keys [client-uids]} @game-state] (filter some? client-uids)))
 
 (defn get-clients-state []
   (let [{:keys [client-uids client-states]} @game-state]

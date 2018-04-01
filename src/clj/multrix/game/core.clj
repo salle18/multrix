@@ -4,4 +4,4 @@
 
 (defn start! [input! output!]
   (input! event-handler)
-  (emitter/start! output!))
+  (emitter/init! output!))

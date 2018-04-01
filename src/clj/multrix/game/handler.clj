@@ -10,17 +10,17 @@
 
 (defmethod event-handler events/connected
   [{:keys [client-uid]}]
+  (log/->debug! "Client connected: %s" client-uid)
   (let [connected-state (state/add-client client-uid)]
     (case connected-state
-      :connected (do
-                   (log/->debug! "Client connected: %s" client-uid)
-                   (emitter/emit-init-game! client-uid))
+      :connected (emitter/connect-client! client-uid)
       :game-full (emitter/emit-game-full! client-uid))))
 
 (defmethod event-handler events/disconnected
   [{:keys [client-uid]}]
   (log/->debug! "Client disconnected: %s" client-uid)
-  (state/remove-client client-uid))
+  (state/remove-client client-uid)
+  (emitter/disconnect-client! client-uid))
 
 (defmethod event-handler events/rotate
   [{:keys [client-uid]}]

@@ -12,9 +12,9 @@
 
 (def client-uid (encore/uuid-str))
 
-(def connected (reagent/cursor state/game-state [:connected]))
+(def connected (reagent/cursor state/game-state$ [:connected]))
 
-(def states (reagent/cursor state/game-state [:clients]))
+(def states (reagent/cursor state/game-state$ [:clients]))
 
 
 ;; -------------------------
@@ -27,13 +27,13 @@
 ;; -------------------------
 ;; Routes
 
-(defonce page (atom #'app-page))
+(defonce page$ (atom #'app-page))
 
 (defn current-page []
-  [:div [@page]])
+  [:div [@page$]])
 
 (secretary/defroute "/" []
-                    (reset! page #'app-page))
+                    (reset! page$ #'app-page))
 
 ;; -------------------------
 ;; Initialize app

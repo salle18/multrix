@@ -6,10 +6,10 @@
             [multrix.game.config :as config]
             [multrix.game.state :refer [get-client-uids get-clients-state get-client-state]]))
 
-(defonce output (atom nil))
+(defonce output$ (atom nil))
 
 (defn output! [client-uid event]
-  (if-let [output-fn! @output] (output-fn! client-uid event)))
+  (if-let [output! @output$] (output! client-uid event)))
 
 (defn emit-with-timeout! [emitter! timeout]
   (go-loop []
@@ -29,6 +29,6 @@
 (defn emit-init-game! [client-uid]
   (output! client-uid [events/game-init {:data (get-clients-state)}]))
 
-(defn start! [output-fn!]
-  (reset! output output-fn!)
+(defn start! [output!]
+  (reset! output$ output!)
   (emit-with-timeout! #(run! emit-state-all! (get-client-uids)) config/game-latency-state-all))

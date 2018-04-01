@@ -4,12 +4,12 @@
             [multrix.ws.config :refer [ws-route]]
             [multrix.ws.handler :refer [event-handler]]))
 
-(defonce router_ (atom nil))
+(defonce router$ (atom nil))
 
-(defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
+(defn stop-router! [] (when-let [stop-f @router$] (stop-f)))
 (defn start-router! [ch-receive! handler]
   (stop-router!)
-  (reset! router_
+  (reset! router$
           (sente/start-client-chsk-router!
            ch-receive! (partial event-handler handler))))
 

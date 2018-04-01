@@ -6,7 +6,7 @@
   {:client-uids   (into [] (repeat max-number-of-clients nil))
    :client-states {}})
 
-(defonce game-state (atom new-game-state))
+(defonce game-state$ (atom new-game-state))
 
 (def new-game-board
   (into [] (repeat court-height (into [] (repeat court-width fields/empty-field)))))
@@ -23,7 +23,7 @@
 
 (defn speed-down [client-uid] ())
 
-(defn has-empty-slots? [] (some nil? (:client-uids @game-state)))
+(defn has-empty-slots? [] (some nil? (:client-uids @game-state$)))
 
 (defn add-client-state [{:keys [client-uids client-states]} client-uid]
   (let [empty-index (.indexOf client-uids nil)]
@@ -32,7 +32,7 @@
 
 (defn add-client [client-uid]
   (if (has-empty-slots?)
-    (do (swap! game-state add-client-state client-uid) :connected)
+    (do (swap! game-state$ add-client-state client-uid) :connected)
     :game-full))
 
 (defn remove-client-state [{:keys [client-uids client-states]} client-uid]
@@ -41,14 +41,14 @@
      :client-states (dissoc client-states client-uid)}))
 
 (defn remove-client [client-uid]
-  (swap! game-state remove-client-state client-uid))
+  (swap! game-state$ remove-client-state client-uid))
 
 (defn get-client-uids []
-  (let [{:keys [client-uids]} @game-state] (filter some? client-uids)))
+  (let [{:keys [client-uids]} @game-state$] (filter some? client-uids)))
 
 (defn get-clients-state []
-  (let [{:keys [client-uids client-states]} @game-state]
+  (let [{:keys [client-uids client-states]} @game-state$]
     (map #(get client-states %) client-uids)))
 
 (defn get-client-state [client-uid]
-  (let [{:keys [client-states]} @game-state] (get client-states client-uid)))
+  (let [{:keys [client-states]} @game-state$] (get client-states client-uid)))

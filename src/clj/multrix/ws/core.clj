@@ -17,12 +17,12 @@
   (def ch-send! send-fn)
   (def connected-uids connected-uids))
 
-(defonce router_ (atom nil))
+(defonce router$ (atom nil))
 
-(defn stop-router! [] (when-let [stop-fn @router_] (stop-fn)))
+(defn stop-router! [] (when-let [stop-fn @router$] (stop-fn)))
 (defn start-router! [handler]
   (stop-router!)
-  (reset! router_
+  (reset! router$
           (sente/start-server-chsk-router!
            ch-receive! (partial event-handler handler))))
 

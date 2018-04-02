@@ -1,6 +1,7 @@
 (ns multrix.game.state
   (:require [multrix.game.config :refer [max-number-of-clients court-width court-height]]
             [multrix.util.seq :as seq]
+            [multrix.game.blocks :as blocks]
             [multrix.game.fields :as fields]))
 
 (def new-game-state
@@ -12,13 +13,23 @@
 (def new-game-board
   (vec (repeat court-height (vec (repeat court-width fields/empty-field)))))
 
-(def new-client-state {:score 0 :board new-game-board})
+(def new-client-state
+  {:score      0
+   :board      new-game-board
+   :bag        blocks/tetrominos-bag
+   :block      nil
+   :next-block nil})
+
+(defn init-client-state [_]
+  (let [{:as client-state :keys [bag]} new-client-state]
+    (assoc client-state :bag (next (next bag)) :block (first bag) :next-block (second bag))))
 
 (defn rotate [client-uid] ())
 
 (defn move-right [client-uid] ())
 
-(defn move-down [client-uid] ())
+(defn move-down [client-uid]
+  (multrix.util.log/->debug! "MOVE DOWN: %s" client-uid))
 
 (defn move-left [client-uid] ())
 
@@ -34,17 +45,25 @@
 (defn client-uid? [client-uid]
   (let [{:keys [client-uids]} @game-state$] (seq/in? client-uids client-uid)))
 
+(defn pack-block [{:keys [blocks]}] (first blocks))
+
+(defn pack-client-state [client-state]
+  (let [packed-blocks (seq/select-keys-with client-state pack-block [:block :next-block])]
+    (apply assoc (select-keys client-state [:score :board]) (mapcat seq packed-blocks))))
+
 (defn clients-state []
-  (let [{:keys [client-uids client-states]} @game-state$]
-    (map #(get client-states %) client-uids)))
+  (let [{:keys [client-states]} @game-state$]
+    (map #(pack-client-state (get client-states %)) (client-uids))))
 
 (defn client-state [client-uid]
-  (let [{:keys [client-states]} @game-state$] (get client-states client-uid)))
+  (let [{:keys [client-states]} @game-state$
+        client-state            (get client-states client-uid)]
+    (pack-client-state client-state)))
 
 (defn- add-client-state [{:keys [client-uids client-states]} client-uid]
   (let [empty-index (.indexOf client-uids nil)]
     {:client-uids   (assoc-in client-uids [empty-index] client-uid)
-     :client-states (assoc-in client-states [client-uid] new-client-state)}))
+     :client-states (update-in client-states [client-uid] init-client-state)}))
 
 (defn add-client [client-uid]
   (if (game-full?)

@@ -1,6 +1,6 @@
 (ns multrix.util.seq)
 
 (defn in?
-  "true if collection contains element"
-  [collection element]
-  (some #(= element %) collection))
+  "true if coll contains elem"
+  [coll elem]
+  (some #(= elem %) coll))

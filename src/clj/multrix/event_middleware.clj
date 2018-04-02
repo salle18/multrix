@@ -10,20 +10,23 @@
 
 (defn event-middleware [handler event] (-event-middleware event handler))
 
+(defn pack-event [{:as event :keys [client-uid]} & rest]
+  (apply assoc event :client-uid (keyword client-uid) rest))
+
 (defmethod -event-middleware :ping
   [_ handler]
   (log/->debug! "Ping"))
 
 (defmethod -event-middleware :connected
-  [{:keys [client-uid send]} handler]
-  (handler {:id events/connected :client-uid client-uid :send send}))
+  [event handler]
+  (handler (pack-event event :id events/connected)))
 
 (defmethod -event-middleware :disconnected
-  [{:keys [client-uid]} handler]
-  (handler {:id events/disconnected :client-uid client-uid}))
+  [event handler]
+  (handler (pack-event event :id events/disconnected)))
 
 (defmethod -event-middleware :default
   [{:as event :keys [id]} handler]
   (if (= (namespace id) event-namespace)
-    (handler event)
+    (handler (pack-event event))
     (log/->debug! "Unknown event: %s" event)))

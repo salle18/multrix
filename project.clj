@@ -104,7 +104,7 @@
                             [pjstadig/humane-test-output "0.8.3"]]
 
              :source-paths ["env/dev/clj"]
-             :plugins      [[lein-figwheel "0.5.15"]]
+             :plugins      [[lein-figwheel "0.5.15"] [lein-kibit "0.1.5"]]
 
              :injections   [(require
                              'pjstadig.humane-test-output)

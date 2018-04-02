@@ -11,7 +11,7 @@
 (defonce emit-channels$ (atom {}))
 
 (defn output! [client-uid event]
-  (if-let [output! @output$] (output! client-uid event)))
+  (if-let [output! @output$] (output! (name client-uid) event)))
 
 (defn emit-with-timeout! [emitter! test? timeout]
   (go-loop []
@@ -33,7 +33,7 @@
 (def state-channel-key :multrix/state-channel)
 
 (defn create-emit-state-channel! []
-  (let [state-emit-channel (emit-with-timeout! emit-state! #(not (state/is-empty?)) config/game-latency-state-all)]
+  (let [state-emit-channel (emit-with-timeout! emit-state! (complement state/game-empty?) config/game-latency-state-all)]
     (swap! emit-channels$ assoc state-channel-key state-emit-channel)))
 
 (defn destroy-emit-channel! [channel-key]
@@ -47,4 +47,4 @@
   (output! client-uid [events/game-init {:data (state/clients-state)}]))
 
 (defn disconnect-client! [client-uid]
-  (if (state/is-empty?) (destroy-emit-channel! state-channel-key)))
+  (if (state/game-empty?) (destroy-emit-channel! state-channel-key)))

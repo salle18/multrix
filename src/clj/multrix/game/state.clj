@@ -4,13 +4,13 @@
             [multrix.game.fields :as fields]))
 
 (def new-game-state
-  {:client-uids   (into [] (repeat max-number-of-clients nil))
+  {:client-uids   (vec (repeat max-number-of-clients nil))
    :client-states {}})
 
 (defonce game-state$ (atom new-game-state))
 
 (def new-game-board
-  (into [] (repeat court-height (into [] (repeat court-width fields/empty-field)))))
+  (vec (repeat court-height (vec (repeat court-width fields/empty-field)))))
 
 (def new-client-state {:score 0 :board new-game-board})
 
@@ -27,11 +27,11 @@
 (defn client-uids []
   (let [{:keys [client-uids]} @game-state$] (filter some? client-uids)))
 
-(defn is-full? [] (= max-number-of-clients (count (client-uids))))
+(defn game-full? [] (= max-number-of-clients (count (client-uids))))
 
-(defn is-empty? [] (= 0 (count (client-uids))))
+(defn game-empty? [] (zero? (count (client-uids))))
 
-(defn has-client-uid? [client-uid]
+(defn client-uid? [client-uid]
   (let [{:keys [client-uids]} @game-state$] (seq/in? client-uids client-uid)))
 
 (defn clients-state []
@@ -47,7 +47,7 @@
      :client-states (assoc-in client-states [client-uid] new-client-state)}))
 
 (defn add-client [client-uid]
-  (if (is-full?)
+  (if (game-full?)
     :game-full
     (do (swap! game-state$ add-client-state client-uid) :connected)))
 
@@ -57,5 +57,5 @@
      :client-states (dissoc client-states client-uid)}))
 
 (defn remove-client [client-uid]
-  (if (has-client-uid? client-uid)
+  (if (client-uid? client-uid)
     (swap! game-state$ remove-client-state client-uid)))

@@ -10,9 +10,9 @@
   (-event-handler event handler))
 
 (defmethod -event-handler :default
-  [{:keys [id ?data ?reply-fn client-uid]} handler]
+  [{:keys [id ?data ?reply-fn client-id]} handler]
   (handler
-   {:id id :data ?data :reply ?reply-fn :client-uid client-uid}))
+   {:id id :data ?data :reply ?reply-fn :client-uid client-id}))
 
 (defmethod -event-handler :chsk/ws-ping
   [_ handler]

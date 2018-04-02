@@ -2,6 +2,7 @@
   (:require [multrix.game.config :refer [max-number-of-clients court-width court-height]]
             [multrix.util.seq :as seq]
             [multrix.game.blocks :as blocks]
+            [multrix.game.direction :as direction]
             [multrix.game.fields :as fields]))
 
 (def new-game-state
@@ -20,18 +21,60 @@
    :block      nil
    :next-block nil})
 
+(defn init-block [block]
+  {:type      block
+   :direction direction/up
+   :x         (int (/ court-width 2))
+   :y         0})
+
 (defn init-client-state [_]
   (let [{:as client-state :keys [bag]} new-client-state]
-    (assoc client-state :bag (next (next bag)) :block (first bag) :next-block (second bag))))
+    (assoc client-state :bag (next (next bag)) :block (init-block (first bag)) :next-block (second bag))))
+
+(defn update-in-client-state [client-uid f]
+  (swap! game-state$ update-in [:client-states client-uid] f))
+
+(defn map-block [f {:keys [type direction x y]}]
+  (let [position (get-in type [:positions direction])]
+    (map-indexed
+     (fn [index bit]
+       (let [dx     (mod index 4)
+             dy     (int (/ index 4))
+             field? (not (zero? (bit-and bit position)))]
+         (if field? (f (+ x dx) (+ y dy)) true)))
+     blocks/tetronimos-bit-positions)))
+
+(defn empty-field? [board x y] (= (get-in board [y x]) fields/empty-field))
+
+(defn allowed-block? [board block]
+  (every? true?
+          (map-block
+           (fn [x y] (and (<= 0 x court-width) (<= y court-height) (empty-field? board x y)))
+           block)))
+
+(defn move [client-uid move-direction]
+  (let [client-state (get-in @game-state$ [:client-states client-uid])
+        block        (:block client-state)
+        board        (:board client-state)]
+    (condp = move-direction
+      direction/down (if (allowed-block? board (update block :y inc))
+                       (update-in-client-state client-uid (fn [client-state] (update-in client-state [:block :y] inc))))
+      direction/left
+      (if (allowed-block? board (update block :x dec))
+        (update-in-client-state client-uid (fn [client-state] (update-in client-state [:block :x] dec))))
+      direction/right
+      (if (allowed-block? board (update block :x inc))
+        (update-in-client-state client-uid (fn [client-state] (update-in client-state [:block :x] inc)))))))
 
 (defn rotate [client-uid] ())
 
-(defn move-right [client-uid] ())
+(defn move-right [client-uid]
+  (move client-uid direction/right))
 
 (defn move-down [client-uid]
-  (multrix.util.log/->debug! "MOVE DOWN: %s" client-uid))
+  (move client-uid direction/down))
 
-(defn move-left [client-uid] ())
+(defn move-left [client-uid] (move client-uid direction/left))
 
 (defn speed-down [client-uid] ())
 
@@ -45,11 +88,8 @@
 (defn client-uid? [client-uid]
   (let [{:keys [client-uids]} @game-state$] (seq/in? client-uids client-uid)))
 
-(defn pack-block [{:keys [blocks]}] (first blocks))
-
 (defn pack-client-state [client-state]
-  (let [packed-blocks (seq/select-keys-with client-state pack-block [:block :next-block])]
-    (apply assoc (select-keys client-state [:score :board]) (mapcat seq packed-blocks))))
+  (select-keys client-state [:score :board :block :next-block]))
 
 (defn clients-state []
   (let [{:keys [client-states]} @game-state$]

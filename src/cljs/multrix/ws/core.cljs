@@ -15,6 +15,6 @@
 
 (defn start! [client-uid handler]
   (let [{:keys [ch-recv send-fn]}
-        (sente/make-channel-socket! ws-route {:type :auto :client-uid client-uid})]
+        (sente/make-channel-socket! ws-route {:type :auto :client-id client-uid})]
     (start-router! ch-recv handler)
     send-fn))

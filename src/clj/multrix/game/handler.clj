@@ -1,8 +1,8 @@
 (ns multrix.game.handler
-  (:require [multrix.util.log :as log]
-            [multrix.game.emitter :as emitter]
+  (:require [multrix.game.emitter :as emitter]
             [multrix.game.events :as events]
-            [multrix.game.state :as state]))
+            [multrix.game.state :as state]
+            [multrix.util.log :as log]))
 
 (defmulti event-handler
   "Multimethod to handle server game events"
@@ -28,15 +28,18 @@
 
 (defmethod event-handler events/move-right
   [{:keys [client-uid]}]
-  (state/move-right client-uid))
+  (state/move-right client-uid)
+  (emitter/emit-state-client! client-uid))
 
 (defmethod event-handler events/move-down
   [{:keys [client-uid]}]
-  (state/move-down client-uid))
+  (state/move-down client-uid)
+  (emitter/emit-state-client! client-uid))
 
 (defmethod event-handler events/move-left
   [{:keys [client-uid]}]
-  (state/move-left client-uid))
+  (state/move-left client-uid)
+  (emitter/emit-state-client! client-uid))
 
 (defmethod event-handler events/speed-down
   [{:keys [client-uid]}]

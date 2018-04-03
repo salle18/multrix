@@ -6,6 +6,6 @@
 
 (def board-height 22)
 
-(def game-latency-state 1000)
+(def game-latency-state 500)
 
 (def game-latency-state-all 2500)

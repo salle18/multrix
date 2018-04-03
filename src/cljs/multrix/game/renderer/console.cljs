@@ -5,5 +5,5 @@
   (let [line-count$ (atom 0)]
     (log/->debug! "\n")
     (run!
-     (fn [row] (log/->debug! "%s %s" @line-count$ row) (swap! line-count$ inc)) board)
+     (fn [row] (log/->debug! "%2d %s" @line-count$ row) (swap! line-count$ inc)) board)
     (log/->debug! "\n")))

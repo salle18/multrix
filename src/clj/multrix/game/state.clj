@@ -119,6 +119,10 @@
 (defn client-uid? [client-uid]
   (let [{:keys [client-uids]} @game-state$] (seq/in? client-uids client-uid)))
 
+(defn client-playing? [client-uid]
+  (let [{:keys [client-states]} @game-state$]
+    (= status/playing (get-in client-states [client-uid :player-status]))))
+
 (defn pack-clients-state [client-state]
   (if client-state (select-keys client-state [:board])))
 

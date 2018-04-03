@@ -43,7 +43,8 @@
   (state/move-down client-uid) (emit-state-client! client-uid))
 
 (defn create-emit-state-client-channel! [client-uid]
-  (let [state-client-emit-channel (emit-with-timeout! #(start-client-emit! client-uid) #(state/client-uid? client-uid) config/game-latency-state)]
+  (let [state-client-emit-channel (emit-with-timeout! #(start-client-emit! client-uid)
+                                                      #(and (state/client-uid? client-uid) (state/client-playing? client-uid)) config/game-latency-state)]
     (create-emit-channel! client-uid state-client-emit-channel)))
 
 (defn destroy-emit-channel! [channel-key]

@@ -15,8 +15,7 @@
   (vec (repeat board-height (vec (repeat board-width fields/empty-field)))))
 
 (def new-client-state
-  {:score      0
-   :board      new-game-board
+  {:board      new-game-board
    :bag        blocks/tetrominos-bag
    :block      nil
    :next-block nil})
@@ -36,13 +35,14 @@
 
 (defn map-block [f {:keys [type direction x y]}]
   (let [position (get-in type [:positions direction])]
-    (map-indexed
-     (fn [index bit]
-       (let [dx     (mod index 4)
-             dy     (int (/ index 4))
-             field? (not (zero? (bit-and bit position)))]
-         (if field? (f (+ x dx) (+ y dy)) true)))
-     blocks/tetronimos-bit-positions)))
+    (filter some?
+            (map-indexed
+             (fn [index bit]
+               (let [dx     (mod index 4)
+                     dy     (int (/ index 4))
+                     field? (not (zero? (bit-and bit position)))]
+                 (if field? (f (+ x dx) (+ y dy)))))
+             blocks/bit-positions))))
 
 (defn empty-field? [board x y] (= (get-in board [y x]) fields/empty-field))
 
@@ -88,17 +88,21 @@
 (defn client-uid? [client-uid]
   (let [{:keys [client-uids]} @game-state$] (seq/in? client-uids client-uid)))
 
-(defn pack-client-state [client-state]
-  (select-keys client-state [:score :board :block :next-block]))
+(defn pack-clients-state [client-state]
+  (if client-state (select-keys client-state [:board])))
 
 (defn clients-state []
-  (let [{:keys [client-states]} @game-state$]
-    (map #(pack-client-state (get client-states %)) (client-uids))))
+  (let [{:keys [client-uids client-states]} @game-state$]
+    (map #(pack-clients-state (get client-states %)) client-uids)))
+
+(defn merge-block-board [{:keys [block board]}]
+  (let [indices (map-block (fn [x, y] [y x]) block)]
+    (reduce #(assoc-in %1 %2 fields/full-field) board indices)))
 
 (defn client-state [client-uid]
   (let [{:keys [client-states]} @game-state$
         client-state            (get client-states client-uid)]
-    (pack-client-state client-state)))
+    {:board (merge-block-board client-state)}))
 
 (defn- add-client-state [{:keys [client-uids client-states]} client-uid]
   (let [empty-index (.indexOf client-uids nil)]

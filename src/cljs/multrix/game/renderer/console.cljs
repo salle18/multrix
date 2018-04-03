@@ -2,6 +2,8 @@
   (:require [multrix.util.log :as log]))
 
 (defn render [board]
-  (log/->debug! "\n\n**********************************")
-  (run! (partial log/->debug! "*%s*") board)
-  (log/->debug! "**********************************\n\n"))
+  (let [line-count$ (atom 0)]
+    (log/->debug! "\n")
+    (run!
+     (fn [row] (log/->debug! "%s %s" @line-count$ row) (swap! line-count$ inc)) board)
+    (log/->debug! "\n")))

@@ -24,7 +24,8 @@
 
 (defmethod event-handler events/rotate
   [{:keys [client-uid]}]
-  (state/rotate client-uid))
+  (state/rotate client-uid)
+  (emitter/emit-state-client! client-uid))
 
 (defmethod event-handler events/move-right
   [{:keys [client-uid]}]

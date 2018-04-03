@@ -71,7 +71,8 @@
           (assoc :next-block (first bag))
           (assoc :bag (or (next bag) (new-bag)))
           (assoc :board (merge-block-board block board)))
-      (-> client-state (assoc :player-status status/lost) (assoc :board (merge-block-board new-block board))))))
+      (-> client-state (assoc :player-status status/lost)
+          (assoc :board (merge-block-board new-block board))))))
 
 (defn move [client-uid move-direction]
   (let [client-state (get-in @game-state$ [:client-states client-uid])
@@ -88,7 +89,15 @@
       (if (allowed-block? board (update block :x inc))
         (update-in-client-state client-uid (fn [client-state] (update-in client-state [:block :x] inc)))))))
 
-(defn rotate [client-uid] ())
+(defn next-direction [direction] (mod (inc direction) 4))
+
+(defn rotate [client-uid]
+  (let [client-state (get-in @game-state$ [:client-states client-uid])
+        block        (:block client-state)
+        board        (:board client-state)]
+    (if (allowed-block? board (update block :direction next-direction))
+      (update-in-client-state client-uid
+                              (fn [client-state] (update-in client-state [:block :direction] next-direction))))))
 
 (defn move-right [client-uid]
   (move client-uid direction/right))

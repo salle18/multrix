@@ -1,6 +1,7 @@
 (ns multrix.game.handler
   (:require [multrix.game.events :as events]
             [multrix.game.state :as state]
+            [multrix.game.renderer.console :as renderer]
             [multrix.util.log :as log]))
 
 (defmulti event-handler
@@ -21,15 +22,15 @@
 
 (defmethod event-handler events/game-init
   [event]
-  (log/->debug! "Init: %s" event))
+  ())
 
 (defmethod event-handler events/game-state
-  [event]
-  (log/->debug! "State: %s" event))
+  [{:keys [data]}]
+  (let [board (:board data)] (renderer/render board)))
 
 (defmethod event-handler events/game-state-all
   [event]
-  (log/->debug! "State for all: %s" event))
+  ())
 
 (defmethod event-handler :default
   [event]

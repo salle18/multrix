@@ -1,5 +1,5 @@
 (ns multrix.game.state
-  (:require [multrix.game.config :refer [max-number-of-clients court-width court-height]]
+  (:require [multrix.game.config :refer [max-number-of-clients board-width board-height]]
             [multrix.util.seq :as seq]
             [multrix.game.blocks :as blocks]
             [multrix.game.direction :as direction]
@@ -12,7 +12,7 @@
 (defonce game-state$ (atom new-game-state))
 
 (def new-game-board
-  (vec (repeat court-height (vec (repeat court-width fields/empty-field)))))
+  (vec (repeat board-height (vec (repeat board-width fields/empty-field)))))
 
 (def new-client-state
   {:score      0
@@ -24,7 +24,7 @@
 (defn init-block [block]
   {:type      block
    :direction direction/up
-   :x         (int (/ court-width 2))
+   :x         (int (/ board-width 2))
    :y         0})
 
 (defn init-client-state [_]
@@ -49,7 +49,7 @@
 (defn allowed-block? [board block]
   (every? true?
           (map-block
-           (fn [x y] (and (<= 0 x court-width) (<= y court-height) (empty-field? board x y)))
+           (fn [x y] (and (<= 0 x board-width) (<= y board-height) (empty-field? board x y)))
            block)))
 
 (defn move [client-uid move-direction]

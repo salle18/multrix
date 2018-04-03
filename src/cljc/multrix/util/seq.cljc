@@ -11,4 +11,5 @@
 
 (defn select-keys-with
   "Returns map of the result of applying f only to entries in map whose key is in keys"
-  [m f keyseq] (update-values (select-keys m keyseq) f))
+  [m f keyseq]
+  (update-values (select-keys m keyseq) f))

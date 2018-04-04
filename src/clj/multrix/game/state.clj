@@ -13,8 +13,11 @@
 
 (defonce game-state$ (atom new-game-state))
 
-(def new-game-board
+(defn get-new-game-board [board-width board-height]
   (vec (repeat board-height (vec (repeat board-width fields/empty-field)))))
+
+(def new-game-board
+  (get-new-game-board board-width board-height))
 
 (defn new-bag []
   (vec (shuffle (flatten (map #(repeat 4 %) blocks/tetrominos)))))
@@ -60,6 +63,24 @@
            (fn [x y] (and (<= 0 x board-width) (<= y board-height) (empty-field? board x y)))
            block)))
 
+(defn full-cell? [cell] (not= cell fields/empty-field))
+
+(defn full-row? [row] (every? full-cell? row))
+
+(defn get-full-row-indices [board]
+  (->> board (map-indexed vector)
+       (filter (fn [[i row]] (full-row? row)))
+       (map first)
+       (apply hash-set)))
+
+(defn remove-full-rows [board]
+  (let [full-row-indices (get-full-row-indices board)]
+    (concat (get-new-game-board board-width (count full-row-indices))
+            (->> board
+                 (map-indexed vector)
+                 (remove #(full-row-indices (first %)))
+                 (map second)))))
+
 (defn merge-block-board [block board]
   (let [indices (map-block (fn [x, y] [y x]) block)]
     (reduce #(assoc-in %1 %2 fields/full-field) board indices)))
@@ -70,7 +91,7 @@
       (-> client-state (assoc :block new-block)
           (assoc :next-block (first bag))
           (assoc :bag (or (next bag) (new-bag)))
-          (assoc :board (merge-block-board block board)))
+          (assoc :board (remove-full-rows (merge-block-board block board))))
       (-> client-state (assoc :player-status status/lost)
           (assoc :board (merge-block-board new-block board))))))
 

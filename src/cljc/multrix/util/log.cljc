@@ -1,7 +1,7 @@
-(ns multrix.util
+(ns multrix.util.log
   (:require [taoensso.encore :as encore]
             [taoensso.timbre :as timbre]))
 
-(defn ->output! [messageFormat & args]
+(defn ->debug! [messageFormat & args]
   (let [message (apply encore/format messageFormat args)]
     (timbre/debug message)))

@@ -1,30 +1,37 @@
 (ns multrix.game.handler
-  (:require [multrix.util :refer [->output!]]))
+  (:require [multrix.game.events :as events]
+            [multrix.game.state :as state]
+            [multrix.game.renderer.console :as renderer]
+            [multrix.util.log :as log]))
 
 (defmulti event-handler
   "Multimethod to handle server game events"
   :id)
 
-(defmethod event-handler :multrix/connected
+(defmethod event-handler events/connected
   [_]
-  (->output! "Game connected"))
+  (state/set-connected true))
 
-(defmethod event-handler :multrix/disconnected
+(defmethod event-handler events/disconnected
   [_]
-  (->output! "Game disconnected"))
+  (state/set-connected false))
 
-(defmethod event-handler :multrix/game-full
+(defmethod event-handler events/game-full
   [_]
-  (->output! "Game full"))
+  (log/->debug! "Game full"))
 
-(defmethod event-handler :multrix/game-init
+(defmethod event-handler events/game-init
   [event]
-  (->output! "State: %s" event))
+  ())
 
-(defmethod event-handler :multrix/state
+(defmethod event-handler events/game-state
+  [{:keys [data]}]
+  (let [board (:board data)] (renderer/render board)))
+
+(defmethod event-handler events/game-state-all
   [event]
-  (->output! "State: %s" event))
+  ())
 
 (defmethod event-handler :default
   [event]
-  (->output! "Unhandled game event: %s" event))
+  (log/->debug! "Unhandled game event: %s" event))

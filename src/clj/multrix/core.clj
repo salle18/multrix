@@ -12,10 +12,7 @@
 
 (def game-output! ws/ch-send!)
 
-(def uids ws/connected-uids)
-
 (defn -main [& args]
-  (do
-    (game/start! game-input! game-output! uids)
-    (println "Starting server...")
-    (run-server app server-config)))
+  (game/start! game-input! game-output!)
+  (println "Starting server...")
+  (run-server app server-config))

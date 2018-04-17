@@ -1,7 +1,9 @@
 (ns multrix.event-middleware
   "Simple event handler that remaps ws events to multrix game events."
-  (:require [multrix.game.config :refer [event-namespace]]
-            [multrix.util :refer [->output!]]))
+  (:require [multrix.game.events
+             :as    events
+             :refer [event-namespace]]
+            [multrix.util.log :as log]))
 
 (defmulti -event-middleware
   "Multimethod to handle server events"
@@ -11,22 +13,22 @@
 
 (defmethod -event-middleware :handshake
   [_ handler]
-  (->output! "Handshake"))
+  (log/->debug! "Handshake"))
 
 (defmethod -event-middleware :ping
   [_ handler]
-  (->output! "Ping"))
+  (log/->debug! "Ping"))
 
 (defmethod -event-middleware :connected
   [_ handler]
-  (handler {:id :multrix/connected}))
+  (handler {:id events/connected}))
 
 (defmethod -event-middleware :disconnected
   [_ handler]
-  (handler {:id :multrix/disconnected}))
+  (handler {:id events/disconnected}))
 
 (defmethod -event-middleware :default
   [{:as event :keys [id]} handler]
   (if (= (namespace id) event-namespace)
     (handler event)
-    (->output! "Unknown event: %s" id)))
+    (log/->debug! "Unknown event: %s" id)))

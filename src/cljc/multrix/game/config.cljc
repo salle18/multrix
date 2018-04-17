@@ -1,5 +1,11 @@
 (ns multrix.game.config)
 
-(def max-number-of-players 4)
+(def max-number-of-clients 4)
 
-(def event-namespace "multrix")
+(def board-width 12)
+
+(def board-height 22)
+
+(def game-latency-state 500)
+
+(def game-latency-state-all 2500)
